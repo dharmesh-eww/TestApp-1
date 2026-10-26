@@ -605,14 +605,7 @@ class _TemplateSelectionScreenState extends State<TemplateSelectionScreen> {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 14),
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: template.backgroundColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: template.secondaryColor.withValues(alpha: 0.35),
-                  width: 1.5,
-                ),
-              ),
+              decoration: _buildTemplateCardDecoration(template),
               child: _buildMiniTemplatePreview(template),
             ),
           ),
@@ -698,74 +691,252 @@ class _TemplateSelectionScreenState extends State<TemplateSelectionScreen> {
     );
   }
 
-  // Miniature representation of the biodata layout
+  // --- Distinct Frame & Background Decoration for Each Template Card ---
+  BoxDecoration _buildTemplateCardDecoration(BiodataTemplateModel template) {
+    switch (template.frameStyle) {
+      case TemplateFrameStyle.ornateDouble:
+        // Royal Traditional: Double gold-lined border with warm ivory background
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: template.secondaryColor,
+            width: 2.0,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: template.secondaryColor.withValues(alpha: 0.12),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.floralScallop:
+        // Classic Floral: Soft scalloped corners with delicate rose tint
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: template.secondaryColor.withValues(alpha: 0.6),
+            width: 1.6,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: template.primaryColor.withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.modernMinimal:
+        // Modern Minimalist: Crisp modern clean hairline frame with sleek drop shadow
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: const Color(0xFFCBD5E1),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.vedicTemple:
+        // Vedic Heritage: Saffron double-layer frame with sandalwood parchment background
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: template.primaryColor,
+            width: 1.8,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: template.secondaryColor.withValues(alpha: 0.18),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.executiveBox:
+        // Executive Elite: Metallic dual-tone border with pearl grey background
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: template.secondaryColor,
+            width: 1.8,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: template.primaryColor.withValues(alpha: 0.10),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.blushDashed:
+        // Blush Elegance: Soft coral ornamental border with champagne peach background
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: template.primaryColor.withValues(alpha: 0.45),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: template.primaryColor.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        );
+    }
+  }
+
+  // --- Miniature Visual Preview with Distinct UI Styles & STRICT Photo Position (Top or Right, NEVER Left) ---
   Widget _buildMiniTemplatePreview(BiodataTemplateModel template) {
     final previewName = widget.candidateName ?? 'Candidate Profile';
 
+    // Dispatches to top-photo layout vs right-photo layout
+    if (template.photoPosition == PhotoPosition.top) {
+      return _buildMiniTopPhotoLayout(template, previewName);
+    } else {
+      return _buildMiniRightPhotoLayout(template, previewName);
+    }
+  }
+
+  // Mini Layout for Templates with Photo on TOP (Royal Traditional, Classic Floral, Vedic Heritage)
+  Widget _buildMiniTopPhotoLayout(
+      BiodataTemplateModel template, String previewName) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Top Emblem & Shloka
+        // 1. Top Emblem / Shloka Bar
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              template.emblemIcon,
-              size: 11,
-              color: template.primaryColor,
-            ),
+            Icon(template.emblemIcon, size: 10, color: template.primaryColor),
             const SizedBox(width: 4),
             Text(
               template.emblemText,
               style: TextStyle(
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
+                fontSize: 8.5,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.4,
                 color: template.primaryColor,
               ),
             ),
             const SizedBox(width: 4),
-            Icon(
-              template.emblemIcon,
-              size: 11,
-              color: template.primaryColor,
+            Icon(template.emblemIcon, size: 10, color: template.primaryColor),
+          ],
+        ),
+        const SizedBox(height: 5),
+
+        // Distinct Header Divider
+        _buildMiniDivider(template),
+        const SizedBox(height: 7),
+
+        // 2. CENTERED TOP PHOTO (Never Left)
+        Center(
+          child: _buildMiniPhotoFrame(template, isTop: true),
+        ),
+        const SizedBox(height: 5),
+
+        // 3. Candidate Name & Highlight (Centered Below Photo)
+        Text(
+          previewName,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: template.primaryColor,
+          ),
+        ),
+        Text(
+          'B.Tech • Senior Software Engineer',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 8.5,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 7),
+
+        // 4. Section & Key Fields
+        _buildMiniSectionHeader(
+            template, template.id == 'vedic_heritage' ? '|| वैयक्तिक विवरण ||' : 'Personal Details'),
+        const SizedBox(height: 4),
+        _buildMiniFieldRow('DOB:', '15 Oct 1996 (28 Yrs)', template),
+        _buildMiniFieldRow('Height:', "5' 10\" • Caste: Brahmin", template),
+        _buildMiniFieldRow('Profession:', 'Sr. Software Engineer', template),
+      ],
+    );
+  }
+
+  // Mini Layout for Templates with Photo on RIGHT (Modern Minimalist, Executive Elite, Blush Elegance)
+  Widget _buildMiniRightPhotoLayout(
+      BiodataTemplateModel template, String previewName) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 1. Top Emblem Tag
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(template.emblemIcon, size: 10, color: template.primaryColor),
+                const SizedBox(width: 4),
+                Text(
+                  template.emblemText,
+                  style: TextStyle(
+                    fontSize: 8.5,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                    color: template.primaryColor,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+              decoration: BoxDecoration(
+                color: template.primaryColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                template.category.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 7.5,
+                  fontWeight: FontWeight.w700,
+                  color: template.primaryColor,
+                ),
+              ),
             ),
           ],
         ),
+        const SizedBox(height: 5),
 
-        const SizedBox(height: 6),
-        Container(
-          height: 1,
-          color: template.secondaryColor.withValues(alpha: 0.5),
-        ),
-        const SizedBox(height: 8),
+        _buildMiniDivider(template),
+        const SizedBox(height: 7),
 
-        // Photo & Info Mini Block
+        // 2. Info on LEFT, Photo on RIGHT (Strictly Right side, Never Left)
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Mini Photo Frame
-            Container(
-              width: 44,
-              height: 52,
-              decoration: BoxDecoration(
-                color: template.cardColor,
-                borderRadius: BorderRadius.circular(
-                  template.isPhotoCentered ? 22 : 6,
-                ),
-                border: Border.all(
-                  color: template.secondaryColor,
-                  width: 1.2,
-                ),
-              ),
-              child: Icon(
-                Icons.person_rounded,
-                size: 24,
-                color: template.primaryColor.withValues(alpha: 0.6),
-              ),
-            ),
-            const SizedBox(width: 10),
-            // Header Info & Mini details
+            // Left Content: Name & Intro details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -779,39 +950,381 @@ class _TemplateSelectionScreenState extends State<TemplateSelectionScreen> {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  _buildMiniFieldRow('DOB:', '15 Oct 1996 • 28 Yrs', template),
-                  _buildMiniFieldRow('Education:', 'B.Tech / MBA Graduate', template),
-                  _buildMiniFieldRow('Profession:', 'Senior Software Engineer', template),
+                  Text(
+                    'Senior Software Engineer',
+                    style: TextStyle(
+                      fontSize: 8.5,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  _buildMiniFieldRow('Age / Ht:', "28 Yrs • 5' 10\"", template),
+                  _buildMiniFieldRow('Education:', 'B.Tech / MBA', template),
+                  _buildMiniFieldRow('City:', 'Bengaluru', template),
                 ],
               ),
             ),
+            const SizedBox(width: 8),
+
+            // Right Photo Frame (Never Left!)
+            _buildMiniPhotoFrame(template, isTop: false),
           ],
         ),
 
-        const SizedBox(height: 8),
+        const SizedBox(height: 7),
 
-        // Section 1: Mini Section Header
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          decoration: BoxDecoration(
-            color: template.secondaryColor.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            'Family Details',
-            style: TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.w700,
-              color: template.primaryColor,
-            ),
-          ),
-        ),
+        // 3. Mini Section Header & Family Info
+        _buildMiniSectionHeader(template, 'Family Background'),
         const SizedBox(height: 4),
         _buildMiniFieldRow('Father:', 'Business Owner', template),
         _buildMiniFieldRow('Mother:', 'Home Maker', template),
       ],
     );
+  }
+
+  // Miniature Photo Frame styled uniquely per template
+  Widget _buildMiniPhotoFrame(BiodataTemplateModel template,
+      {required bool isTop}) {
+    final double width = isTop ? 42 : 46;
+    final double height = isTop ? 42 : 54;
+
+    switch (template.frameStyle) {
+      case TemplateFrameStyle.ornateDouble:
+        // Royal Traditional: Gold halo circle with beaded border
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: template.cardColor,
+            border: Border.all(color: template.secondaryColor, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: template.secondaryColor.withValues(alpha: 0.3),
+                blurRadius: 4,
+              ),
+            ],
+          ),
+          child: Icon(
+            Icons.person_rounded,
+            size: 24,
+            color: template.primaryColor.withValues(alpha: 0.7),
+          ),
+        );
+
+      case TemplateFrameStyle.floralScallop:
+        // Classic Floral: Soft rose floral circular frame
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: template.cardColor,
+            border: Border.all(color: template.secondaryColor, width: 1.5),
+          ),
+          child: Icon(
+            Icons.local_florist_rounded,
+            size: 20,
+            color: template.primaryColor.withValues(alpha: 0.65),
+          ),
+        );
+
+      case TemplateFrameStyle.modernMinimal:
+        // Modern Minimalist: Clean elevated rounded rectangle on the right
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Icon(
+            Icons.person_rounded,
+            size: 26,
+            color: template.primaryColor.withValues(alpha: 0.65),
+          ),
+        );
+
+      case TemplateFrameStyle.vedicTemple:
+        // Vedic Heritage: Saffron arched frame
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(16),
+              bottom: Radius.circular(4),
+            ),
+            border: Border.all(color: template.primaryColor, width: 1.6),
+          ),
+          child: Icon(
+            Icons.person_rounded,
+            size: 22,
+            color: template.primaryColor,
+          ),
+        );
+
+      case TemplateFrameStyle.executiveBox:
+        // Executive Elite: Metallic gold dual-line rectangular frame on the right
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: template.secondaryColor, width: 1.8),
+            boxShadow: [
+              BoxShadow(
+                color: template.primaryColor.withValues(alpha: 0.15),
+                blurRadius: 4,
+              ),
+            ],
+          ),
+          child: Icon(
+            Icons.person_rounded,
+            size: 26,
+            color: template.primaryColor.withValues(alpha: 0.7),
+          ),
+        );
+
+      case TemplateFrameStyle.blushDashed:
+        // Blush Elegance: Soft squircle / oval frame with warm glow on the right
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: template.primaryColor.withValues(alpha: 0.5),
+              width: 1.4,
+            ),
+          ),
+          child: Icon(
+            Icons.person_rounded,
+            size: 24,
+            color: template.primaryColor.withValues(alpha: 0.65),
+          ),
+        );
+    }
+  }
+
+  // Mini Section Header styled uniquely per template
+  Widget _buildMiniSectionHeader(
+      BiodataTemplateModel template, String title) {
+    switch (template.frameStyle) {
+      case TemplateFrameStyle.ornateDouble:
+        // Traditional maroon banner with gold trim
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: template.primaryColor,
+            borderRadius: BorderRadius.circular(3),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('✦ ', style: TextStyle(fontSize: 7, color: template.secondaryColor)),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+              Text(' ✦', style: TextStyle(fontSize: 7, color: template.secondaryColor)),
+            ],
+          ),
+        );
+
+      case TemplateFrameStyle.floralScallop:
+        // Soft rounded rose-tinted pill
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: template.secondaryColor.withValues(alpha: 0.4),
+              width: 0.8,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.local_florist_rounded, size: 8, color: template.primaryColor),
+              const SizedBox(width: 4),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w700,
+                  color: template.primaryColor,
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case TemplateFrameStyle.modernMinimal:
+        // Modern left-accented vertical bar
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(2),
+            border: Border(
+              left: BorderSide(color: template.primaryColor, width: 3),
+            ),
+          ),
+          child: Text(
+            title.toUpperCase(),
+            style: TextStyle(
+              fontSize: 7.5,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
+              color: template.primaryColor,
+            ),
+          ),
+        );
+
+      case TemplateFrameStyle.vedicTemple:
+        // Saffron gradient ribbon
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: template.primaryColor.withValues(alpha: 0.6),
+              width: 0.8,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.w800,
+                color: template.primaryColor,
+              ),
+            ),
+          ),
+        );
+
+      case TemplateFrameStyle.executiveBox:
+        // Executive structured navy bar with gold accent
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            border: Border(
+              bottom: BorderSide(color: template.secondaryColor, width: 1.5),
+            ),
+          ),
+          child: Text(
+            title.toUpperCase(),
+            style: TextStyle(
+              fontSize: 7.5,
+              fontWeight: FontWeight.w800,
+              color: template.primaryColor,
+            ),
+          ),
+        );
+
+      case TemplateFrameStyle.blushDashed:
+        // Soft floating card header
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.favorite_rounded, size: 8, color: template.primaryColor),
+              const SizedBox(width: 4),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w700,
+                  color: template.primaryColor,
+                ),
+              ),
+            ],
+          ),
+        );
+    }
+  }
+
+  // Divider styled per template
+  Widget _buildMiniDivider(BiodataTemplateModel template) {
+    switch (template.frameStyle) {
+      case TemplateFrameStyle.ornateDouble:
+        return Row(
+          children: [
+            Expanded(child: Divider(color: template.secondaryColor, height: 1, thickness: 1)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text('✦', style: TextStyle(fontSize: 7, color: template.secondaryColor)),
+            ),
+            Expanded(child: Divider(color: template.secondaryColor, height: 1, thickness: 1)),
+          ],
+        );
+
+      case TemplateFrameStyle.floralScallop:
+        return Row(
+          children: [
+            Expanded(child: Divider(color: template.secondaryColor.withValues(alpha: 0.5), height: 1)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Icon(Icons.spa_rounded, size: 8, color: template.primaryColor),
+            ),
+            Expanded(child: Divider(color: template.secondaryColor.withValues(alpha: 0.5), height: 1)),
+          ],
+        );
+
+      case TemplateFrameStyle.modernMinimal:
+        return Container(
+          height: 1,
+          color: const Color(0xFFE2E8F0),
+        );
+
+      case TemplateFrameStyle.vedicTemple:
+        return Container(
+          height: 1.5,
+          color: template.primaryColor.withValues(alpha: 0.4),
+        );
+
+      case TemplateFrameStyle.executiveBox:
+        return Container(
+          height: 1.2,
+          color: template.secondaryColor,
+        );
+
+      case TemplateFrameStyle.blushDashed:
+        return Container(
+          height: 1,
+          color: template.primaryColor.withValues(alpha: 0.25),
+        );
+    }
   }
 
   Widget _buildMiniFieldRow(
@@ -821,11 +1334,11 @@ class _TemplateSelectionScreenState extends State<TemplateSelectionScreen> {
       child: Row(
         children: [
           SizedBox(
-            width: 60,
+            width: 58,
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 8.5,
+                fontSize: 8,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textSecondary,
               ),
@@ -837,7 +1350,7 @@ class _TemplateSelectionScreenState extends State<TemplateSelectionScreen> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 8.5,
+                fontSize: 8,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textPrimary,
               ),
@@ -848,152 +1361,622 @@ class _TemplateSelectionScreenState extends State<TemplateSelectionScreen> {
     );
   }
 
-  // Realistic full A4 Preview
+  // --- Realistic Full A4 Preview Sheet with Distinct Frame, Border, Background & Photo on Top or Right (Never Left) ---
   Widget _buildRealisticBiodataSheet(BiodataTemplateModel template) {
     final previewName = widget.candidateName ?? 'Aarav Sharma';
 
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: template.backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: template.secondaryColor,
-          width: 2,
-        ),
-      ),
+      decoration: _buildRealisticSheetDecoration(template),
       child: Column(
         children: [
-          // Double header ornament
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(template.emblemIcon, size: 18, color: template.primaryColor),
-              const SizedBox(width: 8),
-              Text(
-                template.emblemText,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
-                  color: template.primaryColor,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(template.emblemIcon, size: 18, color: template.primaryColor),
-            ],
-          ),
+          // 1. Auspicious / Executive Header
+          _buildRealisticHeader(template),
           const SizedBox(height: 10),
-          Divider(color: template.secondaryColor, thickness: 1.2),
-          const SizedBox(height: 10),
+          _buildRealisticDivider(template),
+          const SizedBox(height: 12),
 
-          // Main Profile Section
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 90,
-                height: 110,
-                decoration: BoxDecoration(
-                  color: template.cardColor,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: template.secondaryColor, width: 1.5),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.person_rounded,
-                    size: 50,
-                    color: template.primaryColor.withValues(alpha: 0.6),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      previewName,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: template.primaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'B.Tech • Senior Engineer at Google',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildFullFieldRow('Date of Birth:', '15 August 1996 (28 Yrs)'),
-                    _buildFullFieldRow('Height / Weight:', "5' 10\" • 72 kg"),
-                    _buildFullFieldRow('Caste / Gotra:', 'Hindu - Brahmin • Kashyap'),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          // 2. Profile Section (Top Photo layout vs Right Photo layout, NEVER Left)
+          if (template.photoPosition == PhotoPosition.top)
+            _buildRealisticTopPhotoProfile(template, previewName)
+          else
+            _buildRealisticRightPhotoProfile(template, previewName),
 
           const SizedBox(height: 16),
 
-          // Section 1: Personal Details
-          _buildFullSectionHeader('Personal Information', template),
-          const SizedBox(height: 6),
-          _buildFullFieldRow('Education:', 'B.Tech in Computer Science & Engineering'),
-          _buildFullFieldRow('Profession:', 'Senior Software Engineer, Google India'),
-          _buildFullFieldRow('Annual Income:', '₹ 32,00,000 / Year'),
-          _buildFullFieldRow('Birth Place:', 'Bengaluru, Karnataka'),
+          // 3. Section 1: Personal Details
+          _buildFullSectionHeader(
+            template.id == 'vedic_heritage'
+                ? '|| वैयक्तिक विवरण || Personal Details'
+                : 'Personal Information',
+            template,
+          ),
+          const SizedBox(height: 8),
+          _buildFullFieldRow('Education:', 'B.Tech in Computer Science & Engineering', template),
+          _buildFullFieldRow('Profession:', 'Senior Software Engineer, Google India', template),
+          _buildFullFieldRow('Annual Income:', '₹ 32,00,000 / Year', template),
+          _buildFullFieldRow('Birth Place:', 'Bengaluru, Karnataka', template),
 
           const SizedBox(height: 14),
 
-          // Section 2: Family Details
-          _buildFullSectionHeader('Family Background', template),
-          const SizedBox(height: 6),
-          _buildFullFieldRow('Father:', 'Rajesh Sharma (Businessman)'),
-          _buildFullFieldRow('Mother:', 'Sunita Sharma (Teacher)'),
-          _buildFullFieldRow('Brothers:', '1 Younger Brother (Studying MBA)'),
-          _buildFullFieldRow('Sisters:', '1 Elder Sister (Married)'),
+          // 4. Section 2: Family Details
+          _buildFullSectionHeader(
+            template.id == 'vedic_heritage'
+                ? '|| कौटुम्बिक पृष्ठभूमि || Family Details'
+                : 'Family Background',
+            template,
+          ),
+          const SizedBox(height: 8),
+          _buildFullFieldRow('Father:', 'Rajesh Sharma (Businessman)', template),
+          _buildFullFieldRow('Mother:', 'Sunita Sharma (Teacher)', template),
+          _buildFullFieldRow('Brothers:', '1 Younger Brother (Studying MBA)', template),
+          _buildFullFieldRow('Sisters:', '1 Elder Sister (Married)', template),
 
           const SizedBox(height: 14),
 
-          // Section 3: Contact & Address
+          // 5. Section 3: Contact & Address
           _buildFullSectionHeader('Contact & Residence', template),
-          const SizedBox(height: 6),
-          _buildFullFieldRow('Address:', '104, Golden Palms, Indiranagar, Bengaluru'),
-          _buildFullFieldRow('Contact:', '+91 98765 43210'),
-          _buildFullFieldRow('Email:', 'sharma.aarav@example.com'),
+          const SizedBox(height: 8),
+          _buildFullFieldRow('Address:', '104, Golden Palms, Indiranagar, Bengaluru', template),
+          _buildFullFieldRow('Contact:', '+91 98765 43210', template),
+          _buildFullFieldRow('Email:', 'sharma.aarav@example.com', template),
         ],
       ),
     );
   }
 
-  Widget _buildFullSectionHeader(
-      String title, BiodataTemplateModel template) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: template.secondaryColor.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(6),
-        border: Border(left: BorderSide(color: template.primaryColor, width: 3.5)),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: template.primaryColor,
+  // Realistic Sheet Outer Decoration with Distinct Frames & Backgrounds
+  BoxDecoration _buildRealisticSheetDecoration(BiodataTemplateModel template) {
+    switch (template.frameStyle) {
+      case TemplateFrameStyle.ornateDouble:
+        // Royal Traditional: Double gold border with subtle inner margin
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: template.secondaryColor, width: 2.5),
+          boxShadow: [
+            BoxShadow(
+              color: template.secondaryColor.withValues(alpha: 0.15),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.floralScallop:
+        // Classic Floral: Soft scalloped corners with delicate rose outline
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: template.secondaryColor, width: 2.0),
+          boxShadow: [
+            BoxShadow(
+              color: template.primaryColor.withValues(alpha: 0.10),
+              blurRadius: 18,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.modernMinimal:
+        // Modern Minimalist: Crisp modern clean border
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 14,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.vedicTemple:
+        // Vedic Heritage: Saffron stepped temple frame
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: template.primaryColor, width: 2.2),
+          boxShadow: [
+            BoxShadow(
+              color: template.secondaryColor.withValues(alpha: 0.20),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.executiveBox:
+        // Executive Elite: Navy & champagne gold dual pinstripe frame
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: template.secondaryColor, width: 2.2),
+          boxShadow: [
+            BoxShadow(
+              color: template.primaryColor.withValues(alpha: 0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.blushDashed:
+        // Blush Elegance: Soft coral ornamental frame
+        return BoxDecoration(
+          color: template.backgroundColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: template.primaryColor.withValues(alpha: 0.5),
+            width: 1.8,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: template.primaryColor.withValues(alpha: 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+    }
+  }
+
+  // Realistic Top Header
+  Widget _buildRealisticHeader(BiodataTemplateModel template) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(template.emblemIcon, size: 18, color: template.primaryColor),
+        const SizedBox(width: 8),
+        Text(
+          template.emblemText,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.2,
+            color: template.primaryColor,
+          ),
         ),
-      ),
+        const SizedBox(width: 8),
+        Icon(template.emblemIcon, size: 18, color: template.primaryColor),
+      ],
     );
   }
 
-  Widget _buildFullFieldRow(String label, String value) {
+  Widget _buildRealisticDivider(BiodataTemplateModel template) {
+    return Row(
+      children: [
+        Expanded(
+          child: Divider(
+            color: template.secondaryColor,
+            thickness: 1.2,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Icon(template.emblemIcon, size: 12, color: template.primaryColor),
+        ),
+        Expanded(
+          child: Divider(
+            color: template.secondaryColor,
+            thickness: 1.2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Realistic Sheet: Centered Top Photo (Never Left!)
+  Widget _buildRealisticTopPhotoProfile(
+      BiodataTemplateModel template, String previewName) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // 1. Centered Photo
+        Center(
+          child: _buildRealisticPhotoWidget(template, isTop: true),
+        ),
+        const SizedBox(height: 10),
+
+        // 2. Candidate Name & Subtitle
+        Text(
+          previewName,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: template.primaryColor,
+          ),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          'B.Tech • Senior Engineer at Google',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 10),
+
+        // 3. Highlight Details Box (Full Width)
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: template.secondaryColor.withValues(alpha: 0.5),
+              width: 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              _buildFullFieldRow('Date of Birth:', '15 August 1996 (28 Yrs)', template),
+              _buildFullFieldRow('Height / Weight:', "5' 10\" • 72 kg", template),
+              _buildFullFieldRow('Caste / Gotra:', 'Hindu - Brahmin • Kashyap', template),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Realistic Sheet: Photo on RIGHT of Content (Never Left!)
+  Widget _buildRealisticRightPhotoProfile(
+      BiodataTemplateModel template, String previewName) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Content on the LEFT
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                previewName,
+                style: TextStyle(
+                  fontSize: 21,
+                  fontWeight: FontWeight.w800,
+                  color: template.primaryColor,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'B.Tech • Senior Engineer at Google',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 10),
+              _buildFullFieldRow('Date of Birth:', '15 August 1996 (28 Yrs)', template),
+              _buildFullFieldRow('Height / Weight:', "5' 10\" • 72 kg", template),
+              _buildFullFieldRow('Caste / Gotra:', 'Hindu - Brahmin • Kashyap', template),
+            ],
+          ),
+        ),
+        const SizedBox(width: 16),
+
+        // Photo on the RIGHT (Strictly Right side, Never Left)
+        _buildRealisticPhotoWidget(template, isTop: false),
+      ],
+    );
+  }
+
+  // Realistic Photo Frame styled per template
+  Widget _buildRealisticPhotoWidget(BiodataTemplateModel template,
+      {required bool isTop}) {
+    final double width = isTop ? 94 : 96;
+    final double height = isTop ? 94 : 118;
+
+    switch (template.frameStyle) {
+      case TemplateFrameStyle.ornateDouble:
+        return Container(
+          width: width,
+          height: width, // Circular halo
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: template.cardColor,
+            border: Border.all(color: template.secondaryColor, width: 3),
+            boxShadow: [
+              BoxShadow(
+                color: template.secondaryColor.withValues(alpha: 0.35),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              size: 52,
+              color: template.primaryColor.withValues(alpha: 0.7),
+            ),
+          ),
+        );
+
+      case TemplateFrameStyle.floralScallop:
+        return Container(
+          width: width,
+          height: width, // Floral wreath circular
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: template.cardColor,
+            border: Border.all(color: template.secondaryColor, width: 2.5),
+            boxShadow: [
+              BoxShadow(
+                color: template.primaryColor.withValues(alpha: 0.15),
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              size: 50,
+              color: template.primaryColor.withValues(alpha: 0.7),
+            ),
+          ),
+        );
+
+      case TemplateFrameStyle.modernMinimal:
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              size: 52,
+              color: template.primaryColor.withValues(alpha: 0.7),
+            ),
+          ),
+        );
+
+      case TemplateFrameStyle.vedicTemple:
+        return Container(
+          width: width,
+          height: width * 1.15,
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(32),
+              bottom: Radius.circular(8),
+            ),
+            border: Border.all(color: template.primaryColor, width: 2.5),
+          ),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              size: 50,
+              color: template.primaryColor,
+            ),
+          ),
+        );
+
+      case TemplateFrameStyle.executiveBox:
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: template.secondaryColor, width: 2.2),
+            boxShadow: [
+              BoxShadow(
+                color: template.primaryColor.withValues(alpha: 0.18),
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              size: 52,
+              color: template.primaryColor.withValues(alpha: 0.75),
+            ),
+          ),
+        );
+
+      case TemplateFrameStyle.blushDashed:
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: template.primaryColor.withValues(alpha: 0.5),
+              width: 1.8,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: template.primaryColor.withValues(alpha: 0.12),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              size: 52,
+              color: template.primaryColor.withValues(alpha: 0.7),
+            ),
+          ),
+        );
+    }
+  }
+
+  // Realistic Section Header styled uniquely per template
+  Widget _buildFullSectionHeader(
+      String title, BiodataTemplateModel template) {
+    switch (template.frameStyle) {
+      case TemplateFrameStyle.ornateDouble:
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: template.primaryColor,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: template.secondaryColor, width: 1),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('✦ ', style: TextStyle(color: template.secondaryColor, fontSize: 11)),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              Text(' ✦', style: TextStyle(color: template.secondaryColor, fontSize: 11)),
+            ],
+          ),
+        );
+
+      case TemplateFrameStyle.floralScallop:
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: template.secondaryColor, width: 1.2),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.local_florist_rounded, size: 14, color: template.primaryColor),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: template.primaryColor,
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case TemplateFrameStyle.modernMinimal:
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(4),
+            border: Border(
+              left: BorderSide(color: template.primaryColor, width: 4),
+            ),
+          ),
+          child: Text(
+            title.toUpperCase(),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.8,
+              color: template.primaryColor,
+            ),
+          ),
+        );
+
+      case TemplateFrameStyle.vedicTemple:
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: template.primaryColor, width: 1.2),
+          ),
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: template.primaryColor,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        );
+
+      case TemplateFrameStyle.executiveBox:
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            border: Border(
+              bottom: BorderSide(color: template.secondaryColor, width: 2),
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.check_box_outline_blank_rounded, size: 10, color: template.secondaryColor),
+              const SizedBox(width: 8),
+              Text(
+                title.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.8,
+                  color: template.primaryColor,
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case TemplateFrameStyle.blushDashed:
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: template.cardColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.spa_rounded, size: 14, color: template.primaryColor),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: template.primaryColor,
+                ),
+              ),
+            ],
+          ),
+        );
+    }
+  }
+
+  Widget _buildFullFieldRow(
+      String label, String value, BiodataTemplateModel template) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2.5),
       child: Row(

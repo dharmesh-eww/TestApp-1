@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 
 enum TemplateCategory { all, traditional, modern, floral, executive }
 
+enum PhotoPosition { top, right }
+
+enum TemplateFrameStyle {
+  ornateDouble, // Royal traditional double gold border with corner knots
+  floralScallop, // Classic floral curved scalloped corners with botanical motifs
+  modernMinimal, // Modern crisp clean hairline frame with subtle shadow
+  vedicTemple, // Authentic Vedic stepped pillar / temple arch frame
+  executiveBox, // Executive dual-line pinstripe frame with metallic badge
+  blushDashed, // Blush elegance dashed decorative border with floating cards
+}
+
 class BiodataTemplateModel {
   final String id;
   final String name;
@@ -14,6 +25,8 @@ class BiodataTemplateModel {
   final Color cardColor;
   final IconData emblemIcon;
   final String emblemText;
+  final PhotoPosition photoPosition;
+  final TemplateFrameStyle frameStyle;
   final bool isPhotoCentered;
   final bool hasSidebar;
 
@@ -29,6 +42,8 @@ class BiodataTemplateModel {
     required this.cardColor,
     required this.emblemIcon,
     required this.emblemText,
+    required this.photoPosition,
+    required this.frameStyle,
     this.isPhotoCentered = false,
     this.hasSidebar = false,
   });
@@ -39,31 +54,35 @@ class BiodataTemplateModel {
         id: 'royal_traditional',
         name: 'Royal Traditional',
         description:
-            'Auspicious maroon & gold with ornamental borders and traditional motifs.',
+            'Auspicious maroon & gold with ornate double border, gold halo top photo, and traditional motifs.',
         category: 'Traditional',
         tag: 'Most Popular',
         primaryColor: Color(0xFF900C3F),
         secondaryColor: Color(0xFFD4AF37),
-        backgroundColor: Color(0xFFFFFDF9),
+        backgroundColor: Color(0xFFFFFDF5),
         cardColor: Color(0xFFFFF8E7),
         emblemIcon: Icons.favorite_rounded,
-        emblemText: '|| Shree Ganeshay Namah ||',
-        isPhotoCentered: false,
+        emblemText: '|| श्री गणेशाय नमः ||',
+        photoPosition: PhotoPosition.top,
+        frameStyle: TemplateFrameStyle.ornateDouble,
+        isPhotoCentered: true,
         hasSidebar: false,
       ),
       const BiodataTemplateModel(
         id: 'classic_floral',
         name: 'Classic Floral',
         description:
-            'Soft rose pink with delicate botanical corner designs and elegant headings.',
+            'Romantic blush & rose with scalloped petal corners, floral wreath top photo, and pastel cards.',
         category: 'Floral',
         tag: 'Trending',
         primaryColor: Color(0xFFC0405E),
         secondaryColor: Color(0xFFE8A598),
-        backgroundColor: Color(0xFFFCF8F8),
-        cardColor: Color(0xFFFFF2F4),
+        backgroundColor: Color(0xFFFDF8F9),
+        cardColor: Color(0xFFFFF2F5),
         emblemIcon: Icons.local_florist_rounded,
-        emblemText: '|| Vivah Hetu Biodata ||',
+        emblemText: '❀ Vivah Hetu Biodata ❀',
+        photoPosition: PhotoPosition.top,
+        frameStyle: TemplateFrameStyle.floralScallop,
         isPhotoCentered: true,
         hasSidebar: false,
       ),
@@ -71,31 +90,35 @@ class BiodataTemplateModel {
         id: 'modern_minimalist',
         name: 'Modern Minimalist',
         description:
-            'Clean split-column layout with photo sidebar and crisp typography.',
+            'Contemporary crisp layout with prominent right-side photo, bold accent bar, and clean typography.',
         category: 'Modern',
         tag: 'Recommended',
-        primaryColor: Color(0xFF2C3E50),
-        secondaryColor: Color(0xFF3498DB),
-        backgroundColor: Color(0xFFFAFAFA),
-        cardColor: Color(0xFFFFFFFF),
+        primaryColor: Color(0xFF1E293B),
+        secondaryColor: Color(0xFF0284C7),
+        backgroundColor: Color(0xFFFFFFFF),
+        cardColor: Color(0xFFF8FAFC),
         emblemIcon: Icons.auto_awesome_rounded,
-        emblemText: 'Matrimonial Resume',
+        emblemText: 'MATRIMONIAL PROFILE',
+        photoPosition: PhotoPosition.right,
+        frameStyle: TemplateFrameStyle.modernMinimal,
         isPhotoCentered: false,
-        hasSidebar: true,
+        hasSidebar: false,
       ),
       const BiodataTemplateModel(
         id: 'vedic_heritage',
         name: 'Vedic Heritage',
         description:
-            'Warm saffron & sandalwood tones with sacred shlokas and dual-line frames.',
+            'Sacred saffron & sandalwood parchment with temple arch frame, centered top photo, and shlokas.',
         category: 'Traditional',
         tag: 'Classic',
-        primaryColor: Color(0xFFD35400),
-        secondaryColor: Color(0xFFF39C12),
-        backgroundColor: Color(0xFFFFFDF5),
-        cardColor: Color(0xFFFFF7E6),
+        primaryColor: Color(0xFFC2410C),
+        secondaryColor: Color(0xFFD97706),
+        backgroundColor: Color(0xFFFFFBEB),
+        cardColor: Color(0xFFFEF3C7),
         emblemIcon: Icons.brightness_7_rounded,
-        emblemText: '|| Om Shreem Namah ||',
+        emblemText: '|| ॐ श्रीं गणेशाय नमः ||',
+        photoPosition: PhotoPosition.top,
+        frameStyle: TemplateFrameStyle.vedicTemple,
         isPhotoCentered: true,
         hasSidebar: false,
       ),
@@ -103,15 +126,17 @@ class BiodataTemplateModel {
         id: 'executive_elite',
         name: 'Executive Elite',
         description:
-            'Premium emerald green & champagne gold with structured section boxes.',
+            'Deep peacock navy & champagne gold with right-aligned framed portrait and structured boxed cards.',
         category: 'Executive',
         tag: 'Premium',
-        primaryColor: Color(0xFF1B4F72),
+        primaryColor: Color(0xFF0F2E4A),
         secondaryColor: Color(0xFFC5A059),
-        backgroundColor: Color(0xFFFBFBFB),
-        cardColor: Color(0xFFF4F6F7),
+        backgroundColor: Color(0xFFF8FAFC),
+        cardColor: Color(0xFFF1F5F9),
         emblemIcon: Icons.workspace_premium_rounded,
-        emblemText: 'Marriage Biodata',
+        emblemText: 'EXECUTIVE BIODATA',
+        photoPosition: PhotoPosition.right,
+        frameStyle: TemplateFrameStyle.executiveBox,
         isPhotoCentered: false,
         hasSidebar: false,
       ),
@@ -119,15 +144,17 @@ class BiodataTemplateModel {
         id: 'blush_elegance',
         name: 'Blush Elegance',
         description:
-            'Gentle coral & peach aesthetic crafted for simple and graceful presentation.',
+            'Gentle coral & honey peach with dashed ornamental frame, right-side oval photo, and floating cards.',
         category: 'Floral',
         tag: 'New',
         primaryColor: Color(0xFFD9534F),
-        secondaryColor: Color(0xFFF0AD4E),
-        backgroundColor: Color(0xFFFFFBF8),
-        cardColor: Color(0xFFFFF3ED),
+        secondaryColor: Color(0xFFE08E45),
+        backgroundColor: Color(0xFFFFF8F3),
+        cardColor: Color(0xFFFFF1EB),
         emblemIcon: Icons.spa_rounded,
-        emblemText: '|| Shubham Bhavatu ||',
+        emblemText: '|| शुभम् भवतु ||',
+        photoPosition: PhotoPosition.right,
+        frameStyle: TemplateFrameStyle.blushDashed,
         isPhotoCentered: false,
         hasSidebar: false,
       ),

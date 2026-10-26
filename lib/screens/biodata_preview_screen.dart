@@ -453,10 +453,10 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.favorite_rounded, size: 14, color: _primaryColor),
+              Icon(widget.template?.emblemIcon ?? Icons.favorite_rounded, size: 14, color: _primaryColor),
               const SizedBox(width: 6),
               Text(
-                '|| Shree Ganeshay Namah ||',
+                widget.template?.emblemText ?? '|| Shree Ganeshay Namah ||',
                 style: TextStyle(
                   fontFamily: _selectedFont.fontFamily,
                   fontSize: _fontSizeScale * 0.85,
@@ -466,7 +466,7 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
                 ),
               ),
               const SizedBox(width: 6),
-              Icon(Icons.favorite_rounded, size: 14, color: _primaryColor),
+              Icon(widget.template?.emblemIcon ?? Icons.favorite_rounded, size: 14, color: _primaryColor),
             ],
           ),
 
@@ -477,50 +477,88 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
           ),
           const SizedBox(height: 8),
 
-          // Top Profile Section: Candidate Photo & Core Intro
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Photo with dynamic size (1x to 4x) and shape (square, rounded, circle)
-              _buildConfigurablePhotoWidget(),
-
-              const SizedBox(width: 14),
-
-              // Name & Key Highlights
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _candidateName,
-                      style: TextStyle(
-                        fontFamily: _selectedFont.fontFamily,
-                        fontSize: _fontSizeScale * 1.35,
-                        fontWeight: FontWeight.w800,
-                        color: _primaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      'Marriage Biodata Profile',
-                      style: TextStyle(
-                        fontFamily: _selectedFont.fontFamily,
-                        fontSize: _fontSizeScale * 0.75,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      height: 2,
-                      width: 40,
-                      color: _secondaryColor,
-                    ),
-                  ],
+          // Top Profile Section: Strictly Top Centered Photo OR Right Photo (Never Left)
+          if (widget.template?.photoPosition == PhotoPosition.top)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(child: _buildConfigurablePhotoWidget()),
+                const SizedBox(height: 10),
+                Text(
+                  _candidateName,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: _selectedFont.fontFamily,
+                    fontSize: _fontSizeScale * 1.35,
+                    fontWeight: FontWeight.w800,
+                    color: _primaryColor,
+                  ),
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(height: 3),
+                Text(
+                  'Marriage Biodata Profile',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: _selectedFont.fontFamily,
+                    fontSize: _fontSizeScale * 0.75,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Center(
+                  child: Container(
+                    height: 2,
+                    width: 40,
+                    color: _secondaryColor,
+                  ),
+                ),
+              ],
+            )
+          else
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Content on the LEFT
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _candidateName,
+                        style: TextStyle(
+                          fontFamily: _selectedFont.fontFamily,
+                          fontSize: _fontSizeScale * 1.35,
+                          fontWeight: FontWeight.w800,
+                          color: _primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Marriage Biodata Profile',
+                        style: TextStyle(
+                          fontFamily: _selectedFont.fontFamily,
+                          fontSize: _fontSizeScale * 0.75,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        height: 2,
+                        width: 40,
+                        color: _secondaryColor,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(width: 14),
+
+                // Photo on the RIGHT (Never on the left side)
+                _buildConfigurablePhotoWidget(),
+              ],
+            ),
 
           SizedBox(height: _sectionSpacing),
 
