@@ -142,6 +142,15 @@ class TemplatePreviewScreen extends StatelessWidget {
   Widget _buildRealisticBiodataSheet(BiodataTemplateModel template) {
     final previewName = candidateName ?? 'Aarav Sharma';
 
+    // If template is a two-column profile layout with facts panel
+    if (template.hasSidebar) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: _buildRealisticSheetDecoration(template),
+        child: _buildRealisticTwoColumnProfile(template, previewName),
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: _buildRealisticSheetDecoration(template),
@@ -155,42 +164,169 @@ class TemplatePreviewScreen extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // Section 1: Personal Details
-          _buildFullSectionHeader(
-            template.id == 'vedic_heritage'
-                ? '|| वैयक्तिक विवरण || Personal Details'
-                : 'Personal Information',
-            template,
-          ),
+          // Section 1: Personal Details (from form screen)
+          _buildFullSectionHeader('Personal Details', template),
           const SizedBox(height: 8),
-          _buildFullFieldRow('Education:', 'B.Tech in Computer Science & Engineering', template),
-          _buildFullFieldRow('Profession:', 'Senior Software Engineer, Google India', template),
-          _buildFullFieldRow('Annual Income:', '₹ 32,00,000 / Year', template),
-          _buildFullFieldRow('Birth Place:', 'Bengaluru, Karnataka', template),
+          _buildFullFieldRow(
+              'Date of Birth:', '15 October 1996 (28 Yrs)', template),
+          _buildFullFieldRow(
+              'Height:', "5' 10\" (178 cm)", template),
+          _buildFullFieldRow(
+              'Caste / Sub-caste:', 'Hindu - Brahmin (Kashyap)', template),
+          _buildFullFieldRow(
+              'Education:', 'B.Tech in Computer Science', template),
+          _buildFullFieldRow(
+              'Occupation:', 'Software Professional', template),
+          _buildFullFieldRow(
+              'Income / Salary:', '₹ 25,00,000 / Year', template),
 
           const SizedBox(height: 14),
 
-          // Section 2: Family Details
-          _buildFullSectionHeader(
-            template.id == 'vedic_heritage'
-                ? '|| कौटुम्बिक पृष्ठभूमि || Family Details'
-                : 'Family Background',
-            template,
-          ),
+          // Section 2: Family Details (from form screen)
+          _buildFullSectionHeader('Family Details', template),
           const SizedBox(height: 8),
-          _buildFullFieldRow('Father:', 'Rajesh Sharma (Businessman)', template),
-          _buildFullFieldRow('Mother:', 'Sunita Sharma (Teacher)', template),
-          _buildFullFieldRow('Brothers:', '1 Younger Brother (Studying MBA)', template),
-          _buildFullFieldRow('Sisters:', '1 Elder Sister (Married)', template),
+          _buildFullFieldRow(
+              'Father Name:', 'Rajesh Sharma (Businessman)', template),
+          _buildFullFieldRow(
+              'Mother Name:', 'Sunita Sharma (Homemaker)', template),
+          _buildFullFieldRow(
+              'Brother(s):', '1 Younger Brother (Studying MBA)', template),
+          _buildFullFieldRow(
+              'Sister(s):', '1 Elder Sister (Married)', template),
 
           const SizedBox(height: 14),
 
-          // Section 3: Contact & Address
-          _buildFullSectionHeader('Contact & Residence', template),
+          // Section 3: Others / Contact (from form screen)
+          _buildFullSectionHeader('Others / Contact', template),
           const SizedBox(height: 8),
-          _buildFullFieldRow('Address:', '104, Golden Palms, Indiranagar, Bengaluru', template),
-          _buildFullFieldRow('Contact:', '+91 98765 43210', template),
-          _buildFullFieldRow('Email:', 'sharma.aarav@example.com', template),
+          _buildFullFieldRow(
+              'Address:', '104, Golden Palms, Ahmedabad, Gujarat', template),
+          _buildFullFieldRow(
+              'Contact Number:', '+91 98765 43210', template),
+          _buildFullFieldRow(
+              'Email:', 'sharma.aarav@example.com', template),
+        ],
+      ),
+    );
+  }
+
+  // Realistic Two-Column Matrimonial Profile Layout
+  Widget _buildRealisticTwoColumnProfile(
+      BiodataTemplateModel template, String previewName) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Left Column / Facts Panel
+        Container(
+          width: 120,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: template.primaryColor.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: template.primaryColor.withValues(alpha: 0.15),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildRealisticPhotoWidget(template, isTop: true),
+              const SizedBox(height: 10),
+              Text(
+                previewName,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: template.primaryColor,
+                ),
+              ),
+              const SizedBox(height: 2),
+              const Text(
+                'Marriage Profile',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Contact details in panel
+              _buildSidebarItem(Icons.phone_rounded, '+91 98765 43210', template),
+              _buildSidebarItem(Icons.email_rounded, 'aarav@mail.com', template),
+              _buildSidebarItem(Icons.location_on_rounded, 'Ahmedabad', template),
+              const SizedBox(height: 10),
+              Container(
+                height: 1,
+                width: double.infinity,
+                color: template.primaryColor.withValues(alpha: 0.2),
+              ),
+              const SizedBox(height: 10),
+              _buildSidebarItem(Icons.cake_rounded, '15 Oct 1996', template),
+              _buildSidebarItem(Icons.height_rounded, "5' 10\" Height", template),
+              _buildSidebarItem(Icons.temple_hindu_rounded, 'Brahmin Gotra', template),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 14),
+
+        // Right Column: Main Form Fields
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildFullSectionHeader('Personal Details', template),
+              const SizedBox(height: 6),
+              _buildFullFieldRow('Education:', 'B.Tech Computer Science', template),
+              _buildFullFieldRow('Occupation:', 'Software Professional', template),
+              _buildFullFieldRow('Income / Salary:', '₹ 25 LPA', template),
+              _buildFullFieldRow('Caste / Sub-caste:', 'Hindu - Brahmin', template),
+
+              const SizedBox(height: 12),
+
+              _buildFullSectionHeader('Family Details', template),
+              const SizedBox(height: 6),
+              _buildFullFieldRow('Father Name:', 'Rajesh Sharma (Business)', template),
+              _buildFullFieldRow('Mother Name:', 'Sunita Sharma (Homemaker)', template),
+              _buildFullFieldRow('Brother(s):', '1 Younger Brother (MBA)', template),
+              _buildFullFieldRow('Sister(s):', '1 Elder Sister (Married)', template),
+
+              const SizedBox(height: 12),
+
+              _buildFullSectionHeader('Others / Residence', template),
+              const SizedBox(height: 6),
+              _buildFullFieldRow('Address:', 'Ahmedabad, Gujarat', template),
+              _buildFullFieldRow('Contact Number:', '+91 98765 43210', template),
+              _buildFullFieldRow('Email:', 'sharma.aarav@example.com', template),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSidebarItem(
+      IconData icon, String text, BiodataTemplateModel template) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          Icon(icon, size: 12, color: template.primaryColor),
+          const SizedBox(width: 5),
+          Expanded(
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.w600,
+                color: template.primaryColor,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -198,10 +334,56 @@ class TemplatePreviewScreen extends StatelessWidget {
 
   // Realistic Sheet Outer Decoration with Distinct Frames & Backgrounds
   BoxDecoration _buildRealisticSheetDecoration(BiodataTemplateModel template) {
+    DecorationImage? bgImage;
+    if (template.backgroundImage != null) {
+      bgImage = DecorationImage(
+        image: AssetImage(template.backgroundImage!),
+        fit: BoxFit.cover,
+        opacity: 0.12,
+      );
+    }
+
     switch (template.frameStyle) {
+      case TemplateFrameStyle.simpleLine:
+        return BoxDecoration(
+          color: template.backgroundColor,
+          image: bgImage,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: template.secondaryColor.withValues(alpha: 0.5),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.simpleCard:
+        return BoxDecoration(
+          color: template.backgroundColor,
+          image: bgImage,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: template.secondaryColor.withValues(alpha: 0.6),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 12,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        );
+
       case TemplateFrameStyle.ornateDouble:
         return BoxDecoration(
           color: template.backgroundColor,
+          image: bgImage,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: template.secondaryColor, width: 2.5),
           boxShadow: [
@@ -216,6 +398,7 @@ class TemplatePreviewScreen extends StatelessWidget {
       case TemplateFrameStyle.floralScallop:
         return BoxDecoration(
           color: template.backgroundColor,
+          image: bgImage,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: template.secondaryColor, width: 2.0),
           boxShadow: [
@@ -230,6 +413,7 @@ class TemplatePreviewScreen extends StatelessWidget {
       case TemplateFrameStyle.modernMinimal:
         return BoxDecoration(
           color: template.backgroundColor,
+          image: bgImage,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
           boxShadow: [
@@ -244,6 +428,7 @@ class TemplatePreviewScreen extends StatelessWidget {
       case TemplateFrameStyle.vedicTemple:
         return BoxDecoration(
           color: template.backgroundColor,
+          image: bgImage,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: template.primaryColor, width: 2.2),
           boxShadow: [
@@ -258,6 +443,7 @@ class TemplatePreviewScreen extends StatelessWidget {
       case TemplateFrameStyle.executiveBox:
         return BoxDecoration(
           color: template.backgroundColor,
+          image: bgImage,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: template.secondaryColor, width: 2.2),
           boxShadow: [
@@ -272,6 +458,7 @@ class TemplatePreviewScreen extends StatelessWidget {
       case TemplateFrameStyle.blushDashed:
         return BoxDecoration(
           color: template.backgroundColor,
+          image: bgImage,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: template.primaryColor.withValues(alpha: 0.5),
@@ -281,6 +468,84 @@ class TemplatePreviewScreen extends StatelessWidget {
             BoxShadow(
               color: template.primaryColor.withValues(alpha: 0.08),
               blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.geometricFretwork:
+        return BoxDecoration(
+          color: template.backgroundColor,
+          image: bgImage,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: template.secondaryColor, width: 2.5),
+          boxShadow: [
+            BoxShadow(
+              color: template.secondaryColor.withValues(alpha: 0.22),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.botanicalWreath:
+        return BoxDecoration(
+          color: template.backgroundColor,
+          image: bgImage,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: template.secondaryColor, width: 2.0),
+          boxShadow: [
+            BoxShadow(
+              color: template.primaryColor.withValues(alpha: 0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.artisticMosaic:
+        return BoxDecoration(
+          color: template.backgroundColor,
+          image: bgImage,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: template.secondaryColor, width: 2.0),
+          boxShadow: [
+            BoxShadow(
+              color: template.primaryColor.withValues(alpha: 0.15),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.luxuryPinstripe:
+        return BoxDecoration(
+          color: template.backgroundColor,
+          image: bgImage,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: template.secondaryColor, width: 2.8),
+          boxShadow: [
+            BoxShadow(
+              color: template.secondaryColor.withValues(alpha: 0.3),
+              blurRadius: 18,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+
+      case TemplateFrameStyle.twoColumnProfile:
+        return BoxDecoration(
+          color: template.backgroundColor,
+          image: bgImage,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: template.secondaryColor.withValues(alpha: 0.5),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 14,
               offset: const Offset(0, 4),
             ),
           ],
@@ -300,7 +565,7 @@ class TemplatePreviewScreen extends StatelessWidget {
         ),
         const SizedBox(height: 10),
 
-        // 2. Candidate Name & Subtitle
+        // 2. Full Name & Subtitle
         Text(
           previewName,
           textAlign: TextAlign.center,
@@ -312,7 +577,7 @@ class TemplatePreviewScreen extends StatelessWidget {
         ),
         const SizedBox(height: 3),
         const Text(
-          'B.Tech • Senior Engineer at Google',
+          'Marriage Biodata Profile',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 13,
@@ -335,9 +600,12 @@ class TemplatePreviewScreen extends StatelessWidget {
           ),
           child: Column(
             children: [
-              _buildFullFieldRow('Date of Birth:', '15 August 1996 (28 Yrs)', template),
-              _buildFullFieldRow('Height / Weight:', "5' 10\" • 72 kg", template),
-              _buildFullFieldRow('Caste / Gotra:', 'Hindu - Brahmin • Kashyap', template),
+              _buildFullFieldRow(
+                  'Date of Birth:', '15 October 1996 (28 Yrs)', template),
+              _buildFullFieldRow(
+                  'Height:', "5' 10\" (178 cm)", template),
+              _buildFullFieldRow(
+                  'Caste / Sub-caste:', 'Hindu - Brahmin • Kashyap Gotra', template),
             ],
           ),
         ),
@@ -366,7 +634,7 @@ class TemplatePreviewScreen extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               const Text(
-                'B.Tech • Senior Engineer at Google',
+                'Marriage Biodata Profile',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -374,9 +642,12 @@ class TemplatePreviewScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              _buildFullFieldRow('Date of Birth:', '15 August 1996 (28 Yrs)', template),
-              _buildFullFieldRow('Height / Weight:', "5' 10\" • 72 kg", template),
-              _buildFullFieldRow('Caste / Gotra:', 'Hindu - Brahmin • Kashyap', template),
+              _buildFullFieldRow(
+                  'Date of Birth:', '15 October 1996 (28 Yrs)', template),
+              _buildFullFieldRow(
+                  'Height:', "5' 10\" (178 cm)", template),
+              _buildFullFieldRow(
+                  'Caste / Sub-caste:', 'Hindu - Brahmin • Kashyap Gotra', template),
             ],
           ),
         ),
@@ -396,6 +667,7 @@ class TemplatePreviewScreen extends StatelessWidget {
 
     switch (template.frameStyle) {
       case TemplateFrameStyle.ornateDouble:
+      case TemplateFrameStyle.geometricFretwork:
         return Container(
           width: width,
           height: width, // Circular halo
@@ -420,6 +692,7 @@ class TemplatePreviewScreen extends StatelessWidget {
         );
 
       case TemplateFrameStyle.floralScallop:
+      case TemplateFrameStyle.botanicalWreath:
         return Container(
           width: width,
           height: width, // Floral wreath circular
@@ -443,14 +716,17 @@ class TemplatePreviewScreen extends StatelessWidget {
           ),
         );
 
+      case TemplateFrameStyle.simpleLine:
+      case TemplateFrameStyle.simpleCard:
       case TemplateFrameStyle.modernMinimal:
+      case TemplateFrameStyle.twoColumnProfile:
         return Container(
           width: width,
           height: height,
           decoration: BoxDecoration(
             color: template.cardColor,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
+            border: Border.all(color: template.primaryColor, width: 1.5),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.08),
@@ -490,6 +766,7 @@ class TemplatePreviewScreen extends StatelessWidget {
         );
 
       case TemplateFrameStyle.executiveBox:
+      case TemplateFrameStyle.luxuryPinstripe:
         return Container(
           width: width,
           height: height,
@@ -514,6 +791,7 @@ class TemplatePreviewScreen extends StatelessWidget {
         );
 
       case TemplateFrameStyle.blushDashed:
+      case TemplateFrameStyle.artisticMosaic:
         return Container(
           width: width,
           height: height,
@@ -547,6 +825,7 @@ class TemplatePreviewScreen extends StatelessWidget {
       String title, BiodataTemplateModel template) {
     switch (template.frameStyle) {
       case TemplateFrameStyle.ornateDouble:
+      case TemplateFrameStyle.geometricFretwork:
         return Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
@@ -558,7 +837,9 @@ class TemplatePreviewScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('✦ ', style: TextStyle(color: template.secondaryColor, fontSize: 11)),
+              Text('✦ ',
+                  style: TextStyle(
+                      color: template.secondaryColor, fontSize: 11)),
               Text(
                 title,
                 style: const TextStyle(
@@ -568,12 +849,15 @@ class TemplatePreviewScreen extends StatelessWidget {
                   letterSpacing: 0.5,
                 ),
               ),
-              Text(' ✦', style: TextStyle(color: template.secondaryColor, fontSize: 11)),
+              Text(' ✦',
+                  style: TextStyle(
+                      color: template.secondaryColor, fontSize: 11)),
             ],
           ),
         );
 
       case TemplateFrameStyle.floralScallop:
+      case TemplateFrameStyle.botanicalWreath:
         return Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
@@ -584,7 +868,8 @@ class TemplatePreviewScreen extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.local_florist_rounded, size: 14, color: template.primaryColor),
+              Icon(Icons.local_florist_rounded,
+                  size: 14, color: template.primaryColor),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -598,7 +883,10 @@ class TemplatePreviewScreen extends StatelessWidget {
           ),
         );
 
+      case TemplateFrameStyle.simpleLine:
+      case TemplateFrameStyle.simpleCard:
       case TemplateFrameStyle.modernMinimal:
+      case TemplateFrameStyle.twoColumnProfile:
         return Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -643,6 +931,7 @@ class TemplatePreviewScreen extends StatelessWidget {
         );
 
       case TemplateFrameStyle.executiveBox:
+      case TemplateFrameStyle.luxuryPinstripe:
         return Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
@@ -654,7 +943,8 @@ class TemplatePreviewScreen extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.check_box_outline_blank_rounded, size: 10, color: template.secondaryColor),
+              Icon(Icons.check_box_outline_blank_rounded,
+                  size: 10, color: template.secondaryColor),
               const SizedBox(width: 8),
               Text(
                 title.toUpperCase(),
@@ -670,6 +960,7 @@ class TemplatePreviewScreen extends StatelessWidget {
         );
 
       case TemplateFrameStyle.blushDashed:
+      case TemplateFrameStyle.artisticMosaic:
         return Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
@@ -703,7 +994,7 @@ class TemplatePreviewScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 110,
+            width: 120,
             child: Text(
               label,
               style: const TextStyle(
@@ -728,4 +1019,3 @@ class TemplatePreviewScreen extends StatelessWidget {
     );
   }
 }
-

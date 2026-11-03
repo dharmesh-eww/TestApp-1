@@ -46,8 +46,13 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
   double _imageScale = 1.8; // 1x to 4x slider
   ImageShapeType _imageShape = ImageShapeType.rounded;
 
-  // Font customization
+  // Font customization with 12 Google Fonts bundled offline
   final List<FontOption> _fontOptions = const [
+    FontOption(
+      name: 'Poppins',
+      fontFamily: 'Poppins',
+      styleLabel: 'Clean Modern Sans',
+    ),
     FontOption(
       name: 'Playfair Display',
       fontFamily: 'Playfair Display',
@@ -57,11 +62,6 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
       name: 'Merriweather',
       fontFamily: 'Merriweather',
       styleLabel: 'Classic Serif',
-    ),
-    FontOption(
-      name: 'Poppins',
-      fontFamily: 'Poppins',
-      styleLabel: 'Clean Modern',
     ),
     FontOption(
       name: 'Cinzel',
@@ -74,9 +74,39 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
       styleLabel: 'Graceful Floral',
     ),
     FontOption(
-      name: 'Roboto',
-      fontFamily: 'Roboto',
-      styleLabel: 'Minimalist Sans',
+      name: 'Montserrat',
+      fontFamily: 'Montserrat',
+      styleLabel: 'Contemporary Sans',
+    ),
+    FontOption(
+      name: 'Cormorant Garamond',
+      fontFamily: 'Cormorant Garamond',
+      styleLabel: 'Luxury Serif',
+    ),
+    FontOption(
+      name: 'Great Vibes',
+      fontFamily: 'Great Vibes',
+      styleLabel: 'Artistic Calligraphy',
+    ),
+    FontOption(
+      name: 'Dancing Script',
+      fontFamily: 'Dancing Script',
+      styleLabel: 'Playful Script',
+    ),
+    FontOption(
+      name: 'Marcellus',
+      fontFamily: 'Marcellus',
+      styleLabel: 'Classical Temple',
+    ),
+    FontOption(
+      name: 'Oswald',
+      fontFamily: 'Oswald',
+      styleLabel: 'Executive Bold',
+    ),
+    FontOption(
+      name: 'Caveat',
+      fontFamily: 'Caveat',
+      styleLabel: 'Handcrafted Casual',
     ),
   ];
   late FontOption _selectedFont;
@@ -408,6 +438,15 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
 
   // Standard A4 Canvas Container with 1 : 1.414 Aspect Ratio & Print Sheet Look
   Widget _buildA4PageContainer({required Widget child}) {
+    DecorationImage? bgImage;
+    if (widget.template?.backgroundImage != null) {
+      bgImage = DecorationImage(
+        image: AssetImage(widget.template!.backgroundImage!),
+        fit: BoxFit.cover,
+        opacity: 0.12,
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Center(
@@ -415,7 +454,8 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
           aspectRatio: 1 / 1.414, // Exact A4 aspect ratio standard
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: widget.template?.backgroundColor ?? Colors.white,
+              image: bgImage,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: _secondaryColor.withValues(alpha: 0.6),
@@ -444,6 +484,143 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
 
   // Page 1: Complete Matrimonial Biodata Sheet
   Widget _buildBiodataFirstPageContent() {
+    // If template has a two-column profile facts layout
+    if (widget.template?.hasSidebar == true) {
+      return Container(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left Profile Sidebar
+            Container(
+              width: 110,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: _primaryColor.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: _primaryColor.withValues(alpha: 0.15),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildConfigurablePhotoWidget(),
+                  const SizedBox(height: 8),
+                  Text(
+                    _candidateName,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: _selectedFont.fontFamily,
+                      fontSize: _fontSizeScale * 1.05,
+                      fontWeight: FontWeight.w800,
+                      color: _primaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Biodata Profile',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: _selectedFont.fontFamily,
+                      fontSize: _fontSizeScale * 0.7,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 1.5,
+                    width: 30,
+                    color: _secondaryColor,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 12),
+
+            // Right Main Column
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _sections.map((section) {
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: _sectionSpacing),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _secondaryColor.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border(
+                              left: BorderSide(color: _primaryColor, width: 3),
+                            ),
+                          ),
+                          child: Text(
+                            section.title,
+                            style: TextStyle(
+                              fontFamily: _selectedFont.fontFamily,
+                              fontSize: _fontSizeScale * 0.9,
+                              fontWeight: FontWeight.w700,
+                              color: _primaryColor,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: _itemSpacing),
+                        ...section.fields.map((field) {
+                          final displayVal = field.value.isNotEmpty
+                              ? field.value
+                              : _getDefaultFieldValue(field.label);
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: _itemSpacing),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 80,
+                                  child: Text(
+                                    '${field.label}:',
+                                    style: TextStyle(
+                                      fontFamily: _selectedFont.fontFamily,
+                                      fontSize: _fontSizeScale * 0.74,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    displayVal,
+                                    style: TextStyle(
+                                      fontFamily: _selectedFont.fontFamily,
+                                      fontSize: _fontSizeScale * 0.78,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(

@@ -1509,7 +1509,7 @@ class _FormScreenState extends State<FormScreen> {
                   final candidateName = (nameController != null &&
                           nameController.text.trim().isNotEmpty)
                       ? nameController.text.trim()
-                      : 'Candidate Profile';
+                      : 'Aarav Sharma';
 
                   // Sync controller values into section fields
                   for (final section in _sections) {
