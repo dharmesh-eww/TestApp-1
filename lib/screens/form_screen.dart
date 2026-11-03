@@ -1511,11 +1511,25 @@ class _FormScreenState extends State<FormScreen> {
                       ? nameController.text.trim()
                       : 'Candidate Profile';
 
+                  // Sync controller values into section fields
+                  for (final section in _sections) {
+                    for (final field in section.fields) {
+                      final c = _controllers[field.id];
+                      if (c != null) {
+                        field.value = c.text.trim();
+                      }
+                    }
+                  }
+
                   _showToast('Biodata saved! Choose your template.');
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => TemplateSelectionScreen(
+                        isSelectionMode: true,
                         candidateName: candidateName,
+                        sections: _sections,
+                        profileImagePath: _profileImagePath,
+                        attachmentImages: _attachmentImages,
                       ),
                     ),
                   );
