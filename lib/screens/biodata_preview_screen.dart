@@ -449,34 +449,6 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Auspicious Header & Shloka
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(widget.template?.emblemIcon ?? Icons.favorite_rounded, size: 14, color: _primaryColor),
-              const SizedBox(width: 6),
-              Text(
-                widget.template?.emblemText ?? '|| Shree Ganeshay Namah ||',
-                style: TextStyle(
-                  fontFamily: _selectedFont.fontFamily,
-                  fontSize: _fontSizeScale * 0.85,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
-                  color: _primaryColor,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Icon(widget.template?.emblemIcon ?? Icons.favorite_rounded, size: 14, color: _primaryColor),
-            ],
-          ),
-
-          const SizedBox(height: 6),
-          Divider(
-            color: _secondaryColor.withValues(alpha: 0.6),
-            thickness: 1.2,
-          ),
-          const SizedBox(height: 8),
-
           // Top Profile Section: Strictly Top Centered Photo OR Right Photo (Never Left)
           if (widget.template?.photoPosition == PhotoPosition.top)
             Column(
@@ -652,18 +624,6 @@ class _BiodataPreviewScreenState extends State<BiodataPreviewScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Top Shloka / Attachment Header
-          Text(
-            '|| Auspicious Documents & Photos ||',
-            style: TextStyle(
-              fontFamily: _selectedFont.fontFamily,
-              fontSize: _fontSizeScale * 0.8,
-              fontWeight: FontWeight.w700,
-              color: _primaryColor,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Divider(color: _secondaryColor.withValues(alpha: 0.5)),
           const Spacer(),
 
           // Centered Attachment Image Graphic / Document Frame
